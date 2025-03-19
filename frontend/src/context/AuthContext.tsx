@@ -1,4 +1,3 @@
-// src/context/AuthContext.tsx
 "use client";
 import { createContext, useState, useEffect, ReactNode } from "react";
 import { useRouter } from "next/navigation";
@@ -6,7 +5,6 @@ import { useRouter } from "next/navigation";
 interface User {
   id: string;
   email: string;
-  // Adicione outras propriedades do usuário conforme necessário
 }
 
 interface AuthContextType {
@@ -25,7 +23,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const token = localStorage.getItem("token");
     if (token) {
       // Verificar o token e buscar os dados do usuário
-      fetch("http://localhost:3001/user/me", {
+      fetch("https://paggocaseback-production.up.railway.app/user/me", {
         method: "GET",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -45,7 +43,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const login = async (email: string, password: string) => {
-    const res = await fetch("http://localhost:3001/user/login", {
+    const res = await fetch("https://paggocaseback-production.up.railway.app/user/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -57,7 +55,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const data = await res.json();
     setUser(data.user);
-    localStorage.setItem("token", data.token); // Supondo que o backend retorna um token
+    localStorage.setItem("token", data.token);
   };
 
   const logout = () => {

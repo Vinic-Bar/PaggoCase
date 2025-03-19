@@ -27,7 +27,7 @@ const RegisterPage = () => {
     setSuccess("");
 
     try {
-      const res = await fetch("http://localhost:3001/user/register", {
+      const res = await fetch("https://paggocaseback-production.up.railway.app/user/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -39,7 +39,7 @@ const RegisterPage = () => {
 
       setSuccess("Conta criada com sucesso!");
       setTimeout(() => {
-        router.push("/login"); // Redireciona para login após 2 segundos
+        router.push("/"); // Redireciona para login após 2 segundos
       }, 2000);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Ocorreu um erro desconhecido.");

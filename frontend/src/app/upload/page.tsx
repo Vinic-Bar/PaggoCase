@@ -4,18 +4,7 @@ import { useState, useContext, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { AuthContext } from "../../context/AuthContext";
 import Header from "../../components/Header";
-import { FaPaperPlane } from 'react-icons/fa'; // Importe o ícone
-
-interface AuthContextType {
-  user: User | null;
-  login: (username: string, password: string) => Promise<void>;
-  logout: () => void;
-}
-
-interface User {
-  id: string;
-  email: string;
-}
+import { FaPaperPlane } from 'react-icons/fa';
 
 const UploadPage = () => {
   const auth = useContext(AuthContext);
@@ -62,7 +51,7 @@ const UploadPage = () => {
     }
 
     try {
-      const res = await fetch("http://localhost:3001/upload", {
+      const res = await fetch("https://paggocaseback-production.up.railway.app/upload", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${localStorage.getItem("token")}`,
@@ -89,7 +78,7 @@ const UploadPage = () => {
         }
 
         // Chamar a API de OCR
-        const ocrRes = await fetch("http://localhost:3001/ocr", {
+        const ocrRes = await fetch("https://paggocaseback-production.up.railway.app/ocr", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -111,7 +100,7 @@ const UploadPage = () => {
         setExtractedText(ocrData.text);
 
         // Atualizar o texto da fatura no backend
-        await fetch("http://localhost:3001/upload/update-invoice-text", {
+        await fetch("https://paggocaseback-production.up.railway.app/upload/update-invoice-text", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -142,7 +131,7 @@ const UploadPage = () => {
     setIsLoading(true); // Inicia o carregamento
 
     try {
-      const res = await fetch("http://localhost:3001/llm", {
+      const res = await fetch("https://paggocaseback-production.up.railway.app/llm", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -157,7 +146,7 @@ const UploadPage = () => {
         setExplanation(data.explanation);
 
         // Salvar a pergunta e resposta no backend
-        await fetch("http://localhost:3001/upload/save-query", {
+        await fetch("https://paggocaseback-production.up.railway.app/upload/save-query", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -186,13 +175,15 @@ const UploadPage = () => {
   return (
     <>
       <Header />
-      <div className="min-h-screen flex flex-col items-center justify-start p-8">
-        <div className="left-side">
+      <div className="min-h-screen flex flex-col items-center justify-start p-8 overflow-y-auto">
+        <div className="left-side w-full max-w-4xl">
           <h1 className="text-3xl font-semibold mb-8">Faça upload da sua fatura</h1>
 
           <div className="flex flex-col items-center gap-4">
             <input
               type="file"
+              id="file-upload"
+              name="file-upload"
               onChange={handleFileChange}
               className="custom-file-input"
             />
@@ -224,19 +215,10 @@ const UploadPage = () => {
               <p className="text-sm text-gray-800">{extractedText}</p>
             </div>
           )}
-        </div>
 
-        <div className="right-side">
           {extractedText && (
-            <>
-              <div className="flex flex-col items-center gap-4">
-                {explanation && (
-                  <div className="message-container">
-                    <h2>Explicação:</h2>
-                    <p>{explanation}</p>
-                  </div>
-                )}
-              </div>
+            <div className="mt-8 p-4 border rounded bg-gray-100">
+              <h2 className="text-lg font-semibold mb-2">Faça uma pergunta sobre o texto:</h2>
               <div className="input-container">
                 {isLoading && (
                   <div className="loading-dots">
@@ -245,9 +227,11 @@ const UploadPage = () => {
                 )}
                 <input
                   type="text"
+                  id="query-input"
+                  name="query-input"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Faça uma pergunta sobre o texto"
+                  placeholder="Digite sua pergunta"
                   className="input-field"
                 />
                 <button
@@ -262,7 +246,14 @@ const UploadPage = () => {
                   )}
                 </button>
               </div>
-            </>
+            </div>
+          )}
+
+          {explanation && (
+            <div className="mt-8 p-4 border rounded bg-gray-100">
+              <h2 className="text-lg font-semibold mb-2">Explicação:</h2>
+              <p className="text-sm text-gray-800">{explanation}</p>
+            </div>
           )}
         </div>
       </div>

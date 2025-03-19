@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest): Promise<Response> {
   const { imagePath, invoiceId } = await req.json();
 
   try {
-    const res = await fetch('http://localhost:3001/ocr', {
+    const res = await fetch('https://paggocaseback-production.up.railway.app/ocr', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
